@@ -1,5 +1,5 @@
 
-# Código para Verificar e Instalar Librería
+# Código para Verificar e Instalar Librerías
 
 import importlib.util
 import subprocess
