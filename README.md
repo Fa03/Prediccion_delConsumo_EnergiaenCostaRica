@@ -2,7 +2,7 @@
 
 Análisis de el consumo de electricidad en la Provincia de Cartago, especificamente con el provedor __JASEC__.
 
-## Lenguajes utilizadas 💻
+## Lenguajes utilizados 💻
 
 * Python
 * SQL
