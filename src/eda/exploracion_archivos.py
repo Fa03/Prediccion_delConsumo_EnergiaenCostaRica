@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 class EDA_Datos:
     def __init__(self, df_datos):
@@ -22,7 +23,7 @@ class EDA_Datos:
         """Revisa valores nulos por columna"""
         try:
             print("\n Valores nulos por columna:")
-            print(self.df.isnull().sum())
+            print(self.df.isnull().sum(),"\n")
         except Exception as e:
             print(f"Error en valores_nulos: {e}")
 
@@ -70,3 +71,61 @@ class EDA_Datos:
             print(f"Faltan columnas necesarias ('Bloque' o 'Tarifa'): {e}")
         except Exception as e:
             print(f"Error en tarifas_por_bloque: {e}")
+
+    # ++++++++++++++  Nuevo +++++++++++
+
+    def eliminar_espacios(self, cols):
+        """Elimina espacios en blanco de las columnas de texto"""
+        for col in cols:
+            if col in self.df.columns:
+                self.df[col] = self.df[col].astype(str).str.strip()
+
+
+    def cardinalidades(self, columnas):
+        """Cardinalidad de columnas categóricas clave, la cantidad de valore distintos en una misma columna"""
+        resultado = {}
+        for col in columnas:
+            if col in self.df.columns:
+                resultado[col] = self.df[col].nunique(dropna=True)
+        return resultado
+
+    def plot_box_tarifa(self, title: str = "Boxplot de Tarifa"):
+        """Boxplot global de tarifa."""
+        plt.figure()
+        plt.boxplot(self.df['Tarifa'].dropna(), vert=True)
+        plt.title(title)
+        plt.ylabel("Tarifa")
+        plt.show()
+
+    def zscore_outliers(self, limite = 3):
+        """Marca outliers por z-score en 'Tarifa'. Devuelve df con columnas extra: zscore, es_outlier."""
+        serie = self.df['Tarifa'].astype(float)
+        mu = np.nanmean(serie)
+        sigma = np.nanstd(serie)
+        z = (serie - mu) / (sigma if sigma != 0 else np.nan)
+        # Nuevo data frame creado con columnas extra
+        out = self.df.copy()
+        out['zscore_tarifa'] = z
+        out['es_outlier'] = np.abs(z) > limite
+        print("DataFrame con columnas extra zscore y es_outlier:")
+        print(out.head(n=10),"\n")
+
+        conteo_outliers = out['es_outlier'].value_counts()
+        print("Conteo de valores en columna 'es_outlier':",conteo_outliers)
+
+        # Crear un nuevo DataFrame con solo las filas True
+        df_solo_outliers = out[out['es_outlier'] == True]
+        print("\nDataFrame con solo outliers (es_outlier == True):")
+        print(df_solo_outliers.head())
+
+        return out
+
+    def top_tarifas_por(self, por, n = 5, mayores = True) -> pd.DataFrame:
+        """Top N tarifas (mayores o menores) por categoría."""
+        if por not in self.df.columns:
+            raise ValueError(f"La columna '{por}' no existe.")
+        orden = False if mayores else True
+        return (self.df
+                .sort_values([por, 'Tarifa'], ascending=[True, orden])
+                .groupby(por, as_index=False)
+                .head(n))
