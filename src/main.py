@@ -3,7 +3,7 @@
 from src.helpers.verificacionLibrerias import libreriasinstaladas
 
 # Uso de la clase libreriasinstaladas
-verificar_librerias = libreriasinstaladas(['importlib.util','subprocess','sys','pandas','matplotlib','seaborn'])
+verificar_librerias = libreriasinstaladas(['importlib.util','subprocess','sys','pandas','matplotlib','seaborn','urllib','sqlalchemy',])
 verificar_librerias.instalar_librerias()
 
 from src.datos.datos import unionArchivos
@@ -18,27 +18,18 @@ obj_union_archivos = unionArchivos(ruta, columnas_eliminar)
 df_unido = obj_union_archivos.union()
 # print(df_unido) # Código solo para pruebas de ejecución (por eso se comenta)
 
+"""Visualización de datos EDA"""
+
 # Uso de la clase exploración_archivos
 
 obj_eda = EDA_Datos(df_unido)
 
-"""LIMPIEZA DE DATOS"""
-obj_eda.valores_nulos()
-cols = ['Mes', 'Empresa', 'Tipo Tarifa', 'Descripción Tarifa', 'Bloque']
-obj_eda.eliminar_espacios(cols)
-
-""" EJECUTAR ANÁLISIS EDA """
+# Ejecutar análisis
 obj_eda.resumen_general()
-print("Diccionario de cardinalidades: \n",obj_eda.cardinalidades(cols),"\n") #diccionario de cardinalidades
-obj_eda.zscore_outliers()
-print("Top 5 de tarifas por Descripción Tarifa",obj_eda.top_tarifas_por('Descripción Tarifa'),"\n")
+obj_eda.valores_nulos()
+obj_eda.distribucion_tarifas()
+obj_eda.correlaciones_numericas()
+obj_eda.tarifas_por_bloque()
 
-"""VISUALIZACIÓN DE DATOS EDA"""
-obj_eda.distribucion_tarifas() #gráfico de barras
-obj_eda.correlaciones_numericas() #gráfico de calor
-obj_eda.tarifas_por_bloque() # gráfico de barras
-obj_eda.plot_box_tarifa() #gráfico de boxplot
 
-"""  CONEXIÓN A LA BASE DE DATOS Y CARGA DE DATOS"""
 
-# obj_eda.df PARA ENVIAR A LA BASE DE DATOS
