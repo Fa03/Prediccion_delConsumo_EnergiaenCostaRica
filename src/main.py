@@ -3,11 +3,15 @@
 from src.helpers.verificacionLibrerias import libreriasinstaladas
 
 # Uso de la clase libreriasinstaladas
-verificar_librerias = libreriasinstaladas(['importlib.util','subprocess','sys','pandas','matplotlib','seaborn'])
+verificar_librerias = libreriasinstaladas(['importlib.util','subprocess','sys','pandas','matplotlib','seaborn','sqlalchemy','pyodbc',
+                                           'urllib'])
 verificar_librerias.instalar_librerias()
 
 from src.datos.datos import unionArchivos
 from src.eda.exploracion_archivos import EDA_Datos
+from src.basedatos.conexion_basedatos import conexion_basedatos
+
+
 
 #Variables para usar clase unionArchivos
 ruta = "C:/Users/fab_t/OneDrive/CUC/PrograII/Proyecto5_Predicción_delConsumode_EnergíaenCostaRica/data/raw"
@@ -41,4 +45,18 @@ obj_eda.plot_box_tarifa() #gráfico de boxplot
 
 """  CONEXIÓN A LA BASE DE DATOS Y CARGA DE DATOS"""
 
-# obj_eda.df PARA ENVIAR A LA BASE DE DATOS
+# Parámetros de conexión a la base de datos SQL Server
+driver = 'ODBC Driver 17 for SQL Server'
+server = 'AZUSFA\\FA_LOCALSERVER'
+database = 'Consumo_Energia_JASEC'
+username = 'RemoteUser'
+password = 'TuContraseñaSegura123!'
+
+obj_connect_bd = conexion_basedatos(driver, server, database, username, password)
+obj_connect_bd.conectar()
+
+nombre_tabla = "Datos_JASEC"
+obj_connect_bd.tabla_existe(nombre_tabla)
+obj_connect_bd.insertar_dataframe(df_unido, nombre_tabla)
+
+
