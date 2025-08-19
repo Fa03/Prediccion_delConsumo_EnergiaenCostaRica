@@ -1,52 +1,8 @@
-# from sqlalchemy import create_engine, inspect
-# import pandas as pd
-#
-# class BaseDatosSQL:
-#     def __init__(self, conexion_str: str):
-#         """
-#         Inicializa la conexión a la base de datos.
-#         Ejemplo de conexión_str:
-#         - SQLite: 'sqlite:///mi_base.db'
-#         - SQL Server: 'mssql+pyodbc://usuario:clave@DSN'
-#         - PostgreSQL: 'postgresql://usuario:clave@localhost:5432/mi_base'
-#         """
-#         try:
-#             self.engine = create_engine(conexion_str)
-#             self.inspector = inspect(self.engine)
-#             print("Conexión establecida correctamente.")
-#         except Exception as e:
-#             print(f"Error al conectar con la base de datos: {e}")
-#             self.engine = None
-#
-#     def tabla_existe(self, nombre_tabla: str) -> bool:
-#         """Verifica si la tabla ya existe en la base de datos"""
-#         try:
-#             return nombre_tabla in self.inspector.get_table_names()
-#         except Exception as e:
-#             print(f"Error al verificar existencia de la tabla: {e}")
-#             return False
-#
-#     def insertar_dataframe(self, df: pd.DataFrame, nombre_tabla: str):
-#         """Inserta el DataFrame en la tabla especificada. Crea la tabla si no existe."""
-#         if self.engine is None:
-#             print("No hay conexión activa con la base de datos.")
-#             return
-#
-#         try:
-#             existe = self.tabla_existe(nombre_tabla)
-#             df.to_sql(nombre_tabla, con=self.engine, if_exists='append' if existe else 'replace', index=False)
-#             print(f"Datos insertados en la tabla '{nombre_tabla}' ({'append' if existe else 'replace'}).")
-#         except Exception as e:
-#             print(f"Error al insertar datos en la tabla '{nombre_tabla}': {e}")
 
-
-
-# ==============  DE PROYECTO DE ALMACENES DE DATOS  ======================
-
-from sqlalchemy import create_engine, text, MetaData, Table, Column, String, Integer, Float, inspect
+from sqlalchemy import create_engine, text, MetaData, Table, Column, String, Integer, Float, create_engine, inspect, Float
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
 import urllib
-import pandas as pd
 
 class conexion_basedatos:
     def __init__(self, driver, server, database, username, password):
@@ -58,6 +14,7 @@ class conexion_basedatos:
         self.engine = None
         self.Session = None
         self.session = None
+
 
     def conectar(self):
         """Conecta a la base de datos SQL Server"""
@@ -76,7 +33,8 @@ class conexion_basedatos:
     def tabla_existe(self, nombre_tabla):
         """Verifica si la tabla ya existe en la base de datos"""
         try:
-            return nombre_tabla in self.inspector.get_table_names()
+            inspector = inspect(self.engine)
+            return inspector.has_table(table_name=nombre_tabla)
         except Exception as e:
             print(f" Error al verificar existencia de la tabla '{nombre_tabla}' no existe en la BD: {e}")
             return False
@@ -95,7 +53,7 @@ class conexion_basedatos:
             columnas = [Column(nombre, tipo) for nombre, tipo in columnas_dict.items()]
             tabla = Table(nombre_tabla, metadata, *columnas)
             metadata.create_all(self.engine)
-            print(f"Tabla '{nombre_tabla}' creada exitosamente.")
+            print(f"Tabla '{nombre_tabla}' creada exitosamente.\n")
         except Exception as e:
             print(f"Error al crear la tabla '{nombre_tabla}': {e}")
 
@@ -125,5 +83,4 @@ class conexion_basedatos:
             df.to_sql(nombre_tabla, con=self.engine, if_exists='append', index=False)
             print(f"Datos insertados en la tabla '{nombre_tabla}'.")
         except Exception as e:
-            print(f" Error al insertar datos en la tabla '{nombre_tabla}': {e}")
-
+            print(f" Error al insertar datos en la tabla '{nombre_tabla}': {e} \n")

@@ -50,13 +50,14 @@ driver = 'ODBC Driver 17 for SQL Server'
 server = 'AZUSFA\\FA_LOCALSERVER'
 database = 'Consumo_Energia_JASEC'
 username = 'RemoteUser'
-password = 'TuContraseñaSegura123!'
+password = 'Intento900@'
 
 obj_connect_bd = conexion_basedatos(driver, server, database, username, password)
 obj_connect_bd.conectar()
 
 nombre_tabla = "Datos_JASEC"
-obj_connect_bd.tabla_existe(nombre_tabla)
-obj_connect_bd.insertar_dataframe(df_unido, nombre_tabla)
+
+# Verificacion de existeencia, creación y llenado de tabla en SQL Server
+# obj_connect_bd.insertar_dataframe(obj_eda.df, nombre_tabla) # ### COMENTADO PARA EVITAR DUPLOCAR DATOS EN LA TABLA
 
 
