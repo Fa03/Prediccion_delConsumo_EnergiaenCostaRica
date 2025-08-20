@@ -10,6 +10,8 @@ verificar_librerias.instalar_librerias()
 from src.datos.datos import unionArchivos
 from src.eda.exploracion_archivos import EDA_Datos
 from src.basedatos.conexion_basedatos import conexion_basedatos
+from src.api import api3
+from src.api.llamado_api import Feriado
 
 
 
@@ -59,6 +61,10 @@ nombre_tabla = "Datos_JASEC"
 
 # Verificacion de existeencia, creación y llenado de tabla en SQL Server
 # obj_connect_bd.insertar_dataframe(obj_eda.df, nombre_tabla) # ### COMENTADO PARA EVITAR DUPLICAR DATOS EN LA TABLA
+
+# Llamado correcto al exportador del API: metodo estático con parámetros explícitos
+Feriado.exportar_desde_api(year=2025, mes=8)
+
 
 
 

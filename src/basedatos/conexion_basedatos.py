@@ -3,6 +3,12 @@ from sqlalchemy import create_engine, text, MetaData, Table, Column, String, Int
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 import urllib
+import requests
+from sqlalchemy import Column, Integer, Date, String, UniqueConstraint
+from sqlalchemy.orm import declarative_base
+from src.basedatos import conexion_basedatos
+from datetime import date  # Ensure proper date conversion
+import os  # Added to read configuration from environment
 
 class conexion_basedatos:
     def __init__(self, driver, server, database, username, password):
@@ -15,7 +21,6 @@ class conexion_basedatos:
         self.Session = None
         self.session = None
 
-
     def conectar(self):
         """Conecta a la base de datos SQL Server"""
         try:
@@ -27,26 +32,10 @@ class conexion_basedatos:
             self.Session = sessionmaker(bind=self.engine)
             self.session = self.Session()
             print("Conexión establecida con la base de datos.")
+            return self.session, self.engine  # Return session and engine for callers
         except Exception as e:
             print(f"Error al conectar con SQL Server: {str(e)}")
-
-    def tabla_existe(self, nombre_tabla):
-        """Verifica si la tabla ya existe en la base de datos"""
-        try:
-            inspector = inspect(self.engine)
-            return inspector.has_table(table_name=nombre_tabla)
-        except Exception as e:
-            print(f" Error al verificar existencia de la tabla '{nombre_tabla}' no existe en la BD: {e}")
-            return False
-
-    def crear_tabla(self, nombre_tabla, columnas_dict):
-        """
-        Crea una tabla en la base de datos con los nombres y tipos de columnas especificados.
-        columnas_dict debe tener formato: {"col1": String, "col2": Integer, ...}
-        """
-        if self.engine is None:
-            print("No hay conexión activa con la base de datos.")
-            return
+            raise
 
         try:
             metadata = MetaData()
@@ -84,3 +73,76 @@ class conexion_basedatos:
             print(f"Datos insertados en la tabla '{nombre_tabla}'.")
         except Exception as e:
             print(f" Error al insertar datos en la tabla '{nombre_tabla}': {e} \n")
+
+def conectar():
+    """
+    Función a nivel de módulo para obtener (session, engine).
+    Lee la configuración desde variables de entorno si están definidas,
+    con valores predeterminados para compatibilidad.
+    """
+    driver = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
+    server = os.getenv('DB_SERVER', 'AZUSFA\\FA_LOCALSERVER')
+    database = os.getenv('DB_DATABASE', 'Consumo_Energia_JASEC')
+    username = os.getenv('DB_USERNAME', 'RemoteUser')
+    password = os.getenv('DB_PASSWORD', 'Intento900@')
+
+    conn = conexion_basedatos(driver, server, database, username, password)
+    return conn.conectar()
+
+Base = declarative_base()
+class Feriado(Base):
+    __tablename__ = 'Feriados'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    fecha = Column(Date, unique=True, nullable=False)
+    nombre = Column(String(255), nullable=False)
+    descripcion = Column(String(500), nullable=True)
+    __table_args__ = (UniqueConstraint('fecha', name='uq_feriado_fecha'),)
+
+    def exportar_desde_api(year: int, mes: int = None):
+        # Construir URL del API
+        url = f"http://localhost:8000/feriados/{year}"
+        if mes:
+            url += f"?mes={mes}"
+
+        # Obtener datos del API
+        response = requests.get(url)
+        response.raise_for_status()
+        payload = response.json()
+        feriados = payload.get("feriados", [])
+
+        # Obtener sesión y engine desde el módulo externo
+        session, engine = conexion_basedatos.conectar()
+
+        # Crear tabla si no existe
+        Base.metadata.create_all(engine)
+
+        nuevos = 0
+        try:
+            for f in feriados:
+                # Asegurar que 'fecha' sea un date (YYYY-MM-DD esperado)
+                try:
+                    fecha_val = f.get("fecha")
+                    if isinstance(fecha_val, str):
+                        fecha_val = date.fromisoformat(fecha_val)
+                except Exception as parse_err:
+                    # Saltar registros con fecha inválida
+                    print(f"Fecha inválida '{f.get('fecha')}', se omite: {parse_err}")
+                    continue
+
+                existe = session.query(Feriado).filter_by(fecha=fecha_val).first()
+                if not existe:
+                    nuevo = Feriado(
+                        fecha=fecha_val,
+                        nombre=f.get("nombre", ""),
+                        descripcion=f.get("descripcion")
+                    )
+                    session.add(nuevo)
+                    nuevos += 1
+
+            session.commit()
+            print(f"{nuevos} feriados insertados en la base de datos.")
+        except Exception as db_err:
+            session.rollback()
+            raise
+        finally:
+            session.close()
