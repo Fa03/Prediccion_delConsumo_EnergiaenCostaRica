@@ -1,14 +1,13 @@
 
-from sqlalchemy import create_engine, text, MetaData, Table, Column, String, Integer, Float, create_engine, inspect, Float
+from sqlalchemy import  MetaData, Table, create_engine, Float
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import SQLAlchemyError
 import urllib
 import requests
 from sqlalchemy import Column, Integer, Date, String, UniqueConstraint
 from sqlalchemy.orm import declarative_base
 from src.basedatos import conexion_basedatos
-from datetime import date  # Ensure proper date conversion
-import os  # Added to read configuration from environment
+from datetime import date  # Para verificar la fecha y su formato
+import os  # lee la configuración del ambiente
 
 class conexion_basedatos:
     def __init__(self, driver, server, database, username, password):
@@ -37,14 +36,6 @@ class conexion_basedatos:
             print(f"Error al conectar con SQL Server: {str(e)}")
             raise
 
-        try:
-            metadata = MetaData()
-            columnas = [Column(nombre, tipo) for nombre, tipo in columnas_dict.items()]
-            tabla = Table(nombre_tabla, metadata, *columnas)
-            metadata.create_all(self.engine)
-            print(f"Tabla '{nombre_tabla}' creada exitosamente.\n")
-        except Exception as e:
-            print(f"Error al crear la tabla '{nombre_tabla}': {e}")
 
     def insertar_dataframe(self, df, nombre_tabla):
         """Inserta el DataFrame en la tabla especificada. Crea la tabla si no existe."""

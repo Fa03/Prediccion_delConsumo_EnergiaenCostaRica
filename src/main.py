@@ -63,7 +63,7 @@ nombre_tabla = "Datos_JASEC"
 # obj_connect_bd.insertar_dataframe(obj_eda.df, nombre_tabla) # ### COMENTADO PARA EVITAR DUPLICAR DATOS EN LA TABLA
 
 # Llamado correcto al exportador del API: metodo estático con parámetros explícitos
-Feriado.exportar_desde_api(year=2025, mes=8)
+Feriado.exportar_desde_api(year=2024, mes=8)
 
 
 

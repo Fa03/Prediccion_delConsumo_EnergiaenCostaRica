@@ -1,4 +1,4 @@
-# feriados_api.py
+
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse, HTMLResponse
 import holidays
@@ -6,7 +6,7 @@ import locale
 from datetime import datetime
 from typing import Optional
 
-# Configurar locale en español
+# Se configura en español
 try:
     locale.setlocale(locale.LC_TIME, "es_CR.UTF-8")
 except locale.Error:
@@ -52,15 +52,3 @@ def get_feriados(year: int,
                  hasta: Optional[str] = Query(None)):
     feriados = obtener_feriados_narrativos(year, mes, desde, hasta)
     return {"año": year, "feriados": feriados}
-
-@app.get("/feriados/html/{year}", response_class=HTMLResponse)
-def get_feriados_html(year: int,
-                      mes: Optional[int] = Query(None, ge=1, le=12),
-                      desde: Optional[str] = Query(None),
-                      hasta: Optional[str] = Query(None)):
-    feriados = obtener_feriados_narrativos(year, mes, desde, hasta)
-    html = f"<h2>Feriados de Costa Rica en {year}</h2><ul>"
-    for f in feriados:
-        html += f"<li><strong>{f['fecha']}</strong>: {f['descripcion']}</li>"
-    html += "</ul>"
-    return html
