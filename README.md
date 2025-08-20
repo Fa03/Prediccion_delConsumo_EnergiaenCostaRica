@@ -1,4 +1,4 @@
-# 🔌 Análisis del Consumo Eléctrico en Cartago — JASEC  ⚡
+# 🔌 Análisis del Consumo Eléctrico en Cartago — JASEC⚡
 
 Este proyecto presenta un estudio del consumo de electricidad en la provincia de Cartago, Costa Rica, utilizando datos disponibles en la página de AREEP. Se emplearon herramientas de análisis de datos en Python para explorar, limpiar y visualizar la información, con el objetivo de entender patrones de consumo y facilitar la toma de decisiones informadas.
 
@@ -15,7 +15,7 @@ Este proyecto presenta un estudio del consumo de electricidad en la provincia de
 
 ---
 
-## 🧰 Tecnologías Utilizadas
+## 🧑🏻‍💻 Tecnologías Utilizadas
 
 | Herramienta     | Propósito                                      |
 |-----------------|------------------------------------------------|
@@ -30,7 +30,7 @@ Este proyecto presenta un estudio del consumo de electricidad en la provincia de
 
 ---
 
-## 🧪 Estructura del Proyecto
+## 🏗️ Estructura del Proyecto
 
 📁 jasec-cartago-electricity/  
 ├── src/  
@@ -55,7 +55,7 @@ Este proyecto presenta un estudio del consumo de electricidad en la provincia de
 
 ---
 
-## 📅 Uso de API
+## ⬇️ Uso de API
 
 Se creo un API para obtener información sobre días feriados desde la libreria **Holidays** que podrían influir en el consumo eléctrico. Estos datos fueron integrados a la base de datos SQL Server para su análisis conjunto.
 
@@ -74,7 +74,7 @@ El notebook principal (`exploracion_inicial.ipynb`) incluye:
   
 ---
 
-📬 **Contacto**  
+ **Contacto**  
 ¿Te interesa colaborar o extender este análisis?  
 Podés escribir a [303650023@cuc.cr] o abrir un issue en este repositorio.  
 
