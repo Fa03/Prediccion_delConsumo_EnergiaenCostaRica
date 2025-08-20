@@ -4,7 +4,7 @@ from src.helpers.verificacionLibrerias import libreriasinstaladas
 
 # Uso de la clase libreriasinstaladas
 verificar_librerias = libreriasinstaladas(['importlib.util','subprocess','sys','pandas','matplotlib','seaborn','sqlalchemy','pyodbc',
-                                           'urllib'])
+                                           'urllib','holidays','fastapi','FastAPI','pydantic','datetime','typing','uvicorn','streamlit'])
 verificar_librerias.instalar_librerias()
 
 from src.datos.datos import unionArchivos
@@ -58,6 +58,8 @@ obj_connect_bd.conectar()
 nombre_tabla = "Datos_JASEC"
 
 # Verificacion de existeencia, creación y llenado de tabla en SQL Server
-# obj_connect_bd.insertar_dataframe(obj_eda.df, nombre_tabla) # ### COMENTADO PARA EVITAR DUPLOCAR DATOS EN LA TABLA
+# obj_connect_bd.insertar_dataframe(obj_eda.df, nombre_tabla) # ### COMENTADO PARA EVITAR DUPLICAR DATOS EN LA TABLA
+
+
 
 
