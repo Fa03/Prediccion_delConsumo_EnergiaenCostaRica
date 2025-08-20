@@ -1,4 +1,4 @@
-# 🔌 Análisis del Consumo Eléctrico en Cartago — JASEC⚡
+# 🔌 Análisis del Consumo Eléctrico en Cartago — JASEC
 
 Este proyecto presenta un estudio del consumo de electricidad en la provincia de Cartago, Costa Rica, utilizando datos disponibles en la página de AREEP. Se emplearon herramientas de análisis de datos en Python para explorar, limpiar y visualizar la información, con el objetivo de entender patrones de consumo y facilitar la toma de decisiones informadas.
 
