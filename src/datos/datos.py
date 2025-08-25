@@ -31,6 +31,6 @@ class unionArchivos:
         # Guardar archivo
         df_final.to_excel("C:/Users/fab_t/OneDrive/CUC/PrograII/Proyecto5_Predicción_delConsumode_EnergíaenCostaRica/data/processed/datos_unificados.xlsx", index=False)
 
-        print("DataFrame final listo con", df_final.shape[0], "filas y", df_final.shape[1], "columnas. \n")
+        print("\n DataFrame final listo con", df_final.shape[0], "filas y", df_final.shape[1], "columnas.")
 
         return df_final
